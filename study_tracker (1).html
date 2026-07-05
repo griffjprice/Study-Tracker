@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Study Countdown</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#fdf6f0;
+    --card:#ffffff;
+    --ink:#4a3f3a;
+    --muted:#a8968d;
+    --peach:#7fa8c9;
+    --peach-soft:#e2edf5;
+    --sage:#9cb897;
+    --sage-soft:#e4ede2;
+    --shadow: 0 8px 24px rgba(120, 150, 180, 0.12);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Nunito Sans', sans-serif;
+    display:flex;
+    justify-content:center;
+    padding:56px 20px;
+  }
+  .sheet{
+    width:100%;
+    max-width:520px;
+  }
+  .eyebrow{
+    font-size:13px;
+    font-weight:700;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:var(--peach);
+    margin-bottom:8px;
+  }
+  h1{
+    font-family:'Fraunces', serif;
+    font-size:36px;
+    font-weight:500;
+    margin:0 0 6px 0;
+  }
+  .sub{
+    font-size:14px;
+    color:var(--muted);
+    margin-bottom:28px;
+  }
+
+  .card{
+    background:var(--card);
+    border-radius:24px;
+    box-shadow:var(--shadow);
+    padding:28px;
+    margin-bottom:20px;
+  }
+
+  .countdown{
+    display:flex;
+    align-items:center;
+    gap:20px;
+  }
+  .countdown .badge{
+    background:var(--peach-soft);
+    border-radius:20px;
+    padding:14px 22px;
+    text-align:center;
+    flex-shrink:0;
+  }
+  .countdown .badge .num{
+    font-family:'Fraunces', serif;
+    font-size:40px;
+    line-height:1;
+    color:var(--peach);
+    font-weight:600;
+  }
+  .countdown .badge .label{
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    color:#5a83a3;
+    margin-top:4px;
+  }
+  .countdown .req{
+    font-size:14px;
+    color:var(--muted);
+  }
+  .countdown .req b{
+    display:block;
+    font-family:'Fraunces', serif;
+    font-size:19px;
+    font-weight:500;
+    color:var(--ink);
+    margin-top:2px;
+  }
+
+  .card h2{
+    font-family:'Fraunces', serif;
+    font-size:15px;
+    font-weight:500;
+    margin:0 0 16px 0;
+    color:var(--ink);
+  }
+
+  .progress-wrap{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    margin-bottom:12px;
+  }
+  .progress-wrap .hours-left{
+    font-size:17px;
+  }
+  .progress-wrap .hours-left b{
+    font-family:'Fraunces', serif;
+    font-size:24px;
+    font-weight:600;
+    color:var(--peach);
+  }
+  .progress-wrap .pct{
+    font-size:13px;
+    font-weight:700;
+    color:var(--sage);
+  }
+  .bar{
+    height:12px;
+    background:var(--sage-soft);
+    border-radius:99px;
+    position:relative;
+    overflow:hidden;
+  }
+  .bar-fill{
+    height:100%;
+    background:var(--sage);
+    border-radius:99px;
+    width:0%;
+    transition:width .4s ease;
+  }
+
+  .row{
+    display:flex;
+    gap:10px;
+    align-items:center;
+    flex-wrap:wrap;
+  }
+  input[type=number]{
+    font-family:'Nunito Sans', sans-serif;
+    font-size:15px;
+    font-weight:600;
+    padding:12px 14px;
+    border:none;
+    border-radius:14px;
+    background:var(--bg);
+    color:var(--ink);
+    width:110px;
+  }
+  input[type=number]:focus{
+    outline:2px solid var(--peach);
+  }
+  button{
+    font-family:'Nunito Sans', sans-serif;
+    font-size:14px;
+    font-weight:700;
+    padding:12px 20px;
+    border:none;
+    border-radius:14px;
+    background:var(--peach);
+    color:#fff;
+    cursor:pointer;
+    transition:transform .15s ease, opacity .15s ease;
+  }
+  button.secondary{
+    background:var(--bg);
+    color:var(--muted);
+  }
+  button:hover{
+    opacity:.9;
+    transform:translateY(-1px);
+  }
+  button:disabled{
+    opacity:.4;
+    cursor:default;
+    transform:none;
+  }
+
+  .stopwatch-time{
+    font-family:'Fraunces', serif;
+    font-size:42px;
+    font-weight:500;
+    font-variant-numeric:tabular-nums;
+    margin-bottom:16px;
+    color:var(--ink);
+  }
+
+  .total-card{
+    background:var(--sage-soft);
+    border-radius:24px;
+    padding:24px 28px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+  }
+  .total-card span:first-child{
+    font-size:14px;
+    font-weight:700;
+    color:#5f7a5a;
+  }
+  .total-card .val{
+    font-family:'Fraunces', serif;
+    font-size:26px;
+    font-weight:600;
+    color:#4d6b48;
+  }
+
+  .note{
+    font-size:12px;
+    color:var(--muted);
+    margin-top:10px;
+  }
+  .footer-note{
+    text-align:center;
+    font-size:12px;
+    color:var(--muted);
+    margin-top:18px;
+  }
+</style>
+</head>
+<body>
+<div class="sheet">
+  <div class="eyebrow">Exam Prep</div>
+  <h1>Study Countdown</h1>
+  <div class="sub">Test date: July 21 &nbsp;·&nbsp; Goal: 51 hours of study</div>
+
+  <div class="card countdown">
+    <div class="badge">
+      <div class="num" id="daysLeft">--</div>
+      <div class="label">days left</div>
+    </div>
+    <div class="req">
+      Test day
+      <b id="testDateLabel">Jul 21</b>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Progress</h2>
+    <div class="progress-wrap">
+      <div class="hours-left"><b id="hoursLeftNum">51.0</b> hrs remaining</div>
+      <div class="pct" id="pctDone">0% done</div>
+    </div>
+    <div class="bar"><div class="bar-fill" id="barFill"></div></div>
+    <div class="note" id="paceNote"></div>
+  </div>
+
+  <div class="card">
+    <h2>Today's Goal</h2>
+    <div class="progress-wrap">
+      <div class="hours-left"><b id="todayPct">0%</b> of today's goal</div>
+      <div class="pct" id="todayGoalLabel">Goal: -- hrs</div>
+    </div>
+    <div class="bar"><div class="bar-fill" id="todayBarFill" style="background:var(--peach);"></div></div>
+    <div class="note" id="todayNote"></div>
+  </div>
+
+  <div class="card">
+    <h2>Log hours studied</h2>
+    <div class="row">
+      <input type="number" id="manualHours" placeholder="e.g. 1.5" step="0.25" min="0">
+      <button id="addManual">Add hours</button>
+      <button class="secondary" id="resetAll">Reset</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Stopwatch</h2>
+    <div class="stopwatch-time" id="stopwatchTime">00:00:00</div>
+    <div class="row">
+      <button id="startStop">Start</button>
+      <button class="secondary" id="lapReset">Reset</button>
+      <button class="secondary" id="addStopwatch" disabled>Add time to total</button>
+    </div>
+  </div>
+
+  <div class="total-card">
+    <span>Total hours studied</span>
+    <span class="val" id="totalStudied">0.0 hrs</span>
+  </div>
+
+  <div class="footer-note">Saved automatically in this browser.</div>
+</div>
+
+<script>
+  // ---- Config ----
+  const REQUIRED_HOURS = 51;
+  // Assumes current year; adjust if needed
+  const now = new Date();
+  const testYear = now.getMonth() === 11 && now.getDate() > 21 ? now.getFullYear() + 1 : now.getFullYear();
+  const testDate = new Date(testYear, 6, 21, 23, 59, 59); // July is month index 6
+
+  // ---- State (persisted to localStorage) ----
+  const STORAGE_KEY = 'study-tracker-total-hours';
+  const TODAY_HOURS_KEY = 'study-tracker-today-hours';
+  const TODAY_GOAL_KEY = 'study-tracker-today-goal';
+  const TODAY_DATE_KEY = 'study-tracker-today-date';
+
+  let totalHours = parseFloat(localStorage.getItem(STORAGE_KEY)) || 0;
+  let stopwatchMs = 0;
+
+  function daysUntilTest(){
+    const diffMs = testDate - new Date();
+    return Math.max(1, Math.ceil(diffMs / (1000*60*60*24)));
+  }
+
+  function todayKey(){
+    return new Date().toDateString();
+  }
+
+  // Set up (or roll over) today's goal
+  let todayHours, todayGoal;
+  const storedDate = localStorage.getItem(TODAY_DATE_KEY);
+  if(storedDate === todayKey()){
+    todayHours = parseFloat(localStorage.getItem(TODAY_HOURS_KEY)) || 0;
+    todayGoal = parseFloat(localStorage.getItem(TODAY_GOAL_KEY)) || 0;
+  } else {
+    // new day: freeze a fresh goal based on current pace, reset today's count
+    const hoursRemaining = Math.max(0, REQUIRED_HOURS - totalHours);
+    todayGoal = Math.round((hoursRemaining / daysUntilTest()) * 4) / 4; // round to nearest 0.25
+    todayHours = 0;
+    localStorage.setItem(TODAY_DATE_KEY, todayKey());
+    localStorage.setItem(TODAY_GOAL_KEY, todayGoal);
+    localStorage.setItem(TODAY_HOURS_KEY, todayHours);
+  }
+
+  function saveTotal(){
+    try{
+      localStorage.setItem(STORAGE_KEY, totalHours);
+      localStorage.setItem(TODAY_HOURS_KEY, todayHours);
+    }catch(e){
+      console.warn('Could not save to localStorage:', e);
+    }
+  }
+  let running = false;
+  let intervalId = null;
+  let lastTick = null;
+
+  // ---- Elements ----
+  const daysLeftEl = document.getElementById('daysLeft');
+  const hoursLeftNumEl = document.getElementById('hoursLeftNum');
+  const pctDoneEl = document.getElementById('pctDone');
+  const barFillEl = document.getElementById('barFill');
+  const paceNoteEl = document.getElementById('paceNote');
+  const totalStudiedEl = document.getElementById('totalStudied');
+  const todayPctEl = document.getElementById('todayPct');
+  const todayGoalLabelEl = document.getElementById('todayGoalLabel');
+  const todayBarFillEl = document.getElementById('todayBarFill');
+  const todayNoteEl = document.getElementById('todayNote');
+  const manualHoursInput = document.getElementById('manualHours');
+  const stopwatchTimeEl = document.getElementById('stopwatchTime');
+  const addStopwatchBtn = document.getElementById('addStopwatch');
+  const startStopBtn = document.getElementById('startStop');
+
+  function updateCountdown(){
+    const diffMs = testDate - new Date();
+    const days = Math.max(0, Math.ceil(diffMs / (1000*60*60*24)));
+    daysLeftEl.textContent = days;
+
+    const hoursRemaining = Math.max(0, REQUIRED_HOURS - totalHours);
+    hoursLeftNumEl.textContent = hoursRemaining.toFixed(1);
+
+    const pct = Math.min(100, (totalHours / REQUIRED_HOURS) * 100);
+    pctDoneEl.textContent = pct.toFixed(0) + '% done';
+    barFillEl.style.width = pct + '%';
+
+    if(hoursRemaining <= 0){
+      paceNoteEl.textContent = "Goal reached — nice work.";
+    } else if(days > 0){
+      paceNoteEl.textContent = `~${(hoursRemaining/days).toFixed(1)} hrs/day needed to hit your goal.`;
+    } else {
+      paceNoteEl.textContent = "Test day is here.";
+    }
+  }
+
+  function updateTodayGoal(){
+    todayGoalLabelEl.textContent = `Goal: ${todayGoal.toFixed(2).replace(/\.?0+$/,'') || '0'} hrs`;
+    if(todayGoal <= 0){
+      todayPctEl.textContent = '—';
+      todayBarFillEl.style.width = '0%';
+      todayNoteEl.textContent = "You're ahead of pace — no hours needed today.";
+      return;
+    }
+    const pct = Math.min(100, (todayHours / todayGoal) * 100);
+    todayPctEl.textContent = pct.toFixed(0) + '%';
+    todayBarFillEl.style.width = pct + '%';
+
+    const remaining = Math.max(0, todayGoal - todayHours);
+    if(remaining <= 0){
+      todayNoteEl.textContent = "Today's goal reached — nice work!";
+    } else {
+      todayNoteEl.textContent = `${remaining.toFixed(2).replace(/\.?0+$/,'')} hour${remaining === 1 ? '' : 's'} to go today.`;
+    }
+  }
+
+  function updateTotalDisplay(){
+    totalStudiedEl.textContent = totalHours.toFixed(1) + ' hrs';
+    saveTotal();
+    updateCountdown();
+    updateTodayGoal();
+  }
+
+  // ---- Manual entry ----
+  document.getElementById('addManual').addEventListener('click', () => {
+    const val = parseFloat(manualHoursInput.value);
+    if(!isNaN(val) && val > 0){
+      totalHours += val;
+      todayHours += val;
+      manualHoursInput.value = '';
+      updateTotalDisplay();
+    }
+  });
+
+  document.getElementById('resetAll').addEventListener('click', () => {
+    if(confirm('Reset total studied hours to 0?')){
+      totalHours = 0;
+      todayHours = 0;
+      todayGoal = Math.round((REQUIRED_HOURS / daysUntilTest()) * 4) / 4;
+      localStorage.setItem(TODAY_DATE_KEY, todayKey());
+      localStorage.setItem(TODAY_GOAL_KEY, todayGoal);
+      updateTotalDisplay();
+    }
+  });
+
+  // ---- Stopwatch ----
+  function formatMs(ms){
+    const totalSec = Math.floor(ms / 1000);
+    const h = String(Math.floor(totalSec / 3600)).padStart(2,'0');
+    const m = String(Math.floor((totalSec % 3600) / 60)).padStart(2,'0');
+    const s = String(totalSec % 60).padStart(2,'0');
+    return `${h}:${m}:${s}`;
+  }
+
+  function tick(){
+    const now = Date.now();
+    stopwatchMs += now - lastTick;
+    lastTick = now;
+    stopwatchTimeEl.textContent = formatMs(stopwatchMs);
+  }
+
+  startStopBtn.addEventListener('click', () => {
+    if(!running){
+      running = true;
+      lastTick = Date.now();
+      intervalId = setInterval(tick, 500);
+      startStopBtn.textContent = 'Pause';
+      addStopwatchBtn.disabled = true;
+    } else {
+      running = false;
+      clearInterval(intervalId);
+      startStopBtn.textContent = 'Start';
+      addStopwatchBtn.disabled = stopwatchMs <= 0;
+    }
+  });
+
+  document.getElementById('lapReset').addEventListener('click', () => {
+    running = false;
+    clearInterval(intervalId);
+    stopwatchMs = 0;
+    stopwatchTimeEl.textContent = '00:00:00';
+    startStopBtn.textContent = 'Start';
+    addStopwatchBtn.disabled = true;
+  });
+
+  addStopwatchBtn.addEventListener('click', () => {
+    const hrs = stopwatchMs / (1000*60*60);
+    if(hrs > 0){
+      totalHours += hrs;
+      todayHours += hrs;
+      stopwatchMs = 0;
+      stopwatchTimeEl.textContent = '00:00:00';
+      addStopwatchBtn.disabled = true;
+      updateTotalDisplay();
+    }
+  });
+
+  // ---- Init ----
+  updateTotalDisplay();
+  setInterval(updateCountdown, 1000 * 60); // refresh day count periodically
+</script>
+</body>
+</html>
